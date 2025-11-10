@@ -78,7 +78,7 @@ module Rapicco
       private
 
       def capture_current_screen(stdout, timeout: 2.0)
-        output = ""
+        output = String.new(encoding: Encoding::BINARY)
 
         begin
           Timeout.timeout(timeout) do
@@ -92,7 +92,14 @@ module Rapicco
           return nil
         end
 
-        output.empty? ? nil : output
+        return nil if output.empty?
+        output.force_encoding(Encoding::UTF_8)
+
+        # Extract only the last frame to avoid animation artifacts
+        # Split by cursor home sequences which indicate a new frame
+        frames = output.split(/(?=\e\[H|\e\[1;1H)/)
+
+        frames.length > 1 ? frames.last : output
       end
     end
   end

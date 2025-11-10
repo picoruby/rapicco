@@ -1,7 +1,7 @@
 module Rapicco
   module PDF
     class AnsiParser
-      ANSI_CSI_PATTERN = /\e\[([0-9;]*)([A-Za-z])/
+      ANSI_CSI_PATTERN = /\e\[([0-9;]*)([A-Za-z@])/
       ANSI_RESET = /\e\[0m/
 
       BLOCK_CHARS = {
@@ -91,6 +91,27 @@ module Rapicco
           clear_screen(params[0] || 0)
         when 'K'
           clear_line(params[0] || 0)
+        when '@'
+          # ICH - Insert Character: Insert blank characters at cursor position
+          # This shifts existing content to the right
+          count = params[0] || 1
+          return if @cursor_y >= @rows || @cursor_x >= @cols
+
+          # Shift existing characters to the right
+          count = [count, @cols - @cursor_x].min
+          if count > 0
+            # Move existing characters to the right
+            (@cols - 1).downto(@cursor_x + count) do |x|
+              if x >= @cursor_x + count && x - count >= @cursor_x
+                @screen[@cursor_y][x] = @screen[@cursor_y][x - count]
+              end
+            end
+            # Insert blank characters
+            (@cursor_x...[@cursor_x + count, @cols].min).each do |x|
+              @screen[@cursor_y][x] = { char: ' ', fg: @current_fg, bg: @current_bg }
+            end
+          end
+          # Cursor position does not change
         when 'm'
           handle_sgr(params.empty? ? [0] : params)
         end

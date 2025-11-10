@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rapicco-pdf (0.1.0)
+    rapicco (0.1.0)
       cairo (~> 1.17)
       ffi (~> 1.15)
 
@@ -44,7 +44,7 @@ DEPENDENCIES
   cairo (~> 1.17)
   ffi (~> 1.15)
   rake (~> 13.0)
-  rapicco-pdf!
+  rapicco!
   rspec (~> 3.0)
 
 BUNDLED WITH
