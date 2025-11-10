@@ -18,7 +18,7 @@ def print_usage
   puts ""
   puts "PDF export options:"
   puts "  --cols NUMBER                Terminal columns for PDF capture (default: 500)"
-  puts "  --rows NUMBER                Terminal rows for PDF capture (default: 140)"
+  puts "  --rows NUMBER                Terminal rows for PDF capture (default: 280)"
   puts "  --char-width NUMBER          Character width in pixels (default: 5)"
   puts "  --char-height NUMBER         Character height in pixels (default: 10)"
   puts ""
@@ -52,7 +52,9 @@ while i < ARGV.length
     options[:cols] = ARGV[i + 1].to_i
     i += 1
   when '--rows'
-    options[:rows] = ARGV[i + 1].to_i
+    # Rapicco uses half-block characters (2 vertical dots per character)
+    # so divide rows by 2 for internal processing
+    options[:rows] = ARGV[i + 1].to_i / 2
     i += 1
   when '--char-width'
     options[:char_width] = ARGV[i + 1].to_i
