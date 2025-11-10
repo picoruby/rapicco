@@ -11,7 +11,7 @@ It also converts Rapicco presentations  into PDF documents capturing the ANSI te
 
 ## Requirements
 
-- Ruby 3.0 or later
+- Ruby (you can see supported versions in [rapicco.gemspec](rapicco.gemspec))
 - Cairo graphics library
 - PicoRuby with Rapicco installed
 
