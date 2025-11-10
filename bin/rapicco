@@ -3,23 +3,36 @@
 require_relative '../lib/rapicco'
 
 def print_usage
-  puts "Usage: rapicco [options] <slide.md> <output.pdf>"
+  puts "Usage: rapicco [options] <slide.md>"
+  puts ""
+  puts "Modes:"
+  puts "  rapicco <slide.md>                           Run presentation"
+  puts "  rapicco --print <slide.md>                   Export to PDF (slide.pdf)"
+  puts "  rapicco -p -o output.pdf <slide.md>          Export to PDF with custom name"
   puts ""
   puts "Options:"
-  puts "  --rapicco-command CMD    Command to run Rapicco (default: auto-detect)"
-  puts "  --cols NUMBER            Terminal columns (default: 80)"
-  puts "  --rows NUMBER            Terminal rows (default: 24)"
-  puts "  --char-width NUMBER      Character width in pixels (default: 10)"
-  puts "  --char-height NUMBER     Character height in pixels (default: 20)"
-  puts "  -h, --help               Show this help message"
+  puts "  -p, --print                  Export presentation to PDF instead of running"
+  puts "  -o, --output-filename FILE   Output PDF filename (default: <slide>.pdf)"
+  puts "  --rapicco-command CMD        Command to run Rapicco (default: use PICORUBY_PATH)"
+  puts "  -h, --help                   Show this help message"
   puts ""
-  puts "Example:"
-  puts "  rapicco presentation.md output.pdf"
-  puts "  rapicco --cols 100 --rows 30 presentation.md output.pdf"
+  puts "PDF export options:"
+  puts "  --cols NUMBER                Terminal columns for PDF capture (default: 500)"
+  puts "  --rows NUMBER                Terminal rows for PDF capture (default: 140)"
+  puts "  --char-width NUMBER          Character width in pixels (default: 5)"
+  puts "  --char-height NUMBER         Character height in pixels (default: 10)"
+  puts ""
+  puts "Examples:"
+  puts "  rapicco presentation.md"
+  puts "  rapicco --print presentation.md"
+  puts "  rapicco -p -o output.pdf presentation.md"
+  puts "  rapicco -p --cols 600 --rows 150 presentation.md"
 end
 
 options = {}
 args = []
+
+print_mode = false
 
 i = 0
 while i < ARGV.length
@@ -27,6 +40,11 @@ while i < ARGV.length
   when '-h', '--help'
     print_usage
     exit 0
+  when '-p', '--print'
+    print_mode = true
+  when '-o', '--output-filename'
+    options[:output_filename] = ARGV[i + 1]
+    i += 1
   when '--rapicco-command'
     options[:rapicco_command] = ARGV[i + 1]
     i += 1
@@ -48,26 +66,40 @@ while i < ARGV.length
   i += 1
 end
 
-if args.length != 2
-  puts "Error: Please provide both input and output files"
+if args.length != 1
+  puts "Error: Please provide a slide file"
   puts ""
   print_usage
   exit 1
 end
 
 slide_file = args[0]
-output_pdf = args[1]
 
 unless File.exist?(slide_file)
   puts "Error: Input file not found: #{slide_file}"
   exit 1
 end
 
-begin
-  converter = Rapicco::PDF::Converter.new(slide_file, output_pdf, options)
-  converter.convert
-rescue => e
-  puts "Error: #{e.message}"
-  puts e.backtrace if ENV['DEBUG']
-  exit 1
+if print_mode
+  # PDF export mode
+  output_pdf = options[:output_filename] || slide_file.sub(/\.[^.]+$/, '.pdf')
+
+  begin
+    converter = Rapicco::PDF::Converter.new(slide_file, output_pdf, options)
+    converter.convert
+  rescue => e
+    puts "Error: #{e.message}"
+    puts e.backtrace if ENV['DEBUG']
+    exit 1
+  end
+else
+  # Presentation mode
+  begin
+    presenter = Rapicco::Presenter.new(slide_file, options)
+    presenter.run
+  rescue => e
+    puts "Error: #{e.message}"
+    puts e.backtrace if ENV['DEBUG']
+    exit 1
+  end
 end
