@@ -109,6 +109,17 @@ if print_mode
   # PDF export mode
   output_pdf = options[:output_filename] || slide_file.sub(/\.[^.]+$/, '.pdf')
 
+  # Auto-calculate missing dimension for 16:9 aspect ratio
+  if options[:cols] && !options[:rows]
+    # cols specified, calculate rows for 16:9
+    # Divide by 2 because Rapicco uses half-block characters (2 vertical dots per character)
+    options[:rows] = (options[:cols] * 9.0 / 16.0 / 2.0).round
+  elsif !options[:cols] && options[:rows]
+    # rows specified (already divided by 2), calculate cols for 16:9
+    # Multiply by 2 to get actual vertical dots before calculating horizontal
+    options[:cols] = (options[:rows] * 2.0 * 16.0 / 9.0).round
+  end
+
   begin
     converter = Rapicco::PDF::Converter.new(slide_file, output_pdf, options)
     converter.convert
