@@ -76,11 +76,19 @@ module Rapicco
         begin
           Timeout.timeout(timeout) do
             loop do
-              output << stdout.read_nonblock(10000)
+              begin
+                chunk = stdout.read_nonblock(10000)
+                output << chunk
+              rescue IO::WaitReadable
+                if IO.select([stdout], nil, nil, 1.0)
+                  retry
+                else
+                  break
+                end
+              end
             end
           end
         rescue Timeout::Error
-        rescue IO::WaitReadable
         rescue EOFError, Errno::EIO
           return nil
         end
