@@ -4,6 +4,7 @@ PATH
     rapicco (0.1.0)
       cairo (~> 1.17)
       ffi (~> 1.15)
+      rake (~> 13.0)
 
 GEM
   remote: https://rubygems.org/

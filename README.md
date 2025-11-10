@@ -19,13 +19,68 @@ It also converts Rapicco presentations  into PDF documents capturing the ANSI te
 gem install rapicco
 ```
 
-Or add to your Gemfile:
+## Usage
 
-```ruby
-gem 'rapicco'
+### Create a presentation project (recommended)
+
+1. Create a new presentation project:
+
+```bash
+rapicco new my-presentation
+cd my-presentation
 ```
 
-## Usage
+Or in existing directory,
+
+```bash
+cd my-presentation
+rapicco new .
+```
+
+This generates:
+- `Gemfile` with rapicco gem
+- `Rakefile` with presentation tasks
+- `slide.md` template
+- `config.yml` configuration
+- `README.md` template
+- `.gitignore`
+
+2. Install dependencies:
+
+```bash
+bundle install
+```
+
+3. Use rake tasks to manage your presentation:
+
+```bash
+bundle exec rake -T
+```
+
+Available tasks:
+```
+rake gem      # Create gem package
+rake pdf      # Generate PDF
+rake publish  # Publish gem to RubyGems.org
+rake run      # Run presentation
+```
+
+**Show presentation:**
+```bash
+bundle exec rake run
+```
+
+**Generate PDF:**
+```bash
+bundle exec rake pdf
+```
+
+**Create gem package:**
+```bash
+bundle exec rake gem
+```
+
+### Using CLI directly
 
 **Show presentation:**
 ```bash
