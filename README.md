@@ -1,5 +1,7 @@
 # Rapicco
 
+[![Test](https://github.com/picoruby/rapicco/actions/workflows/test.yml/badge.svg)](https://github.com/picoruby/rapicco/actions/workflows/test.yml)
+
 A wrapper tool of PicoRuby Rapicco terminal-based presentation.
 
 ## Overview
