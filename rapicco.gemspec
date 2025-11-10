@@ -14,7 +14,7 @@ Gem::Specification.new do |spec|
   spec.executables   = ["rapicco"]
   spec.require_paths = ["lib"]
 
-  spec.required_ruby_version = ">= 3.0.0"
+  spec.required_ruby_version = ">= 3.2.0"
 
   spec.add_dependency "cairo", "~> 1.17"
   spec.add_dependency "ffi", "~> 1.15"
