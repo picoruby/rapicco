@@ -27,11 +27,17 @@ gem 'rapicco'
 
 ## Usage
 
+**Show presentation:**
 ```bash
-rapicco input.md output.pdf
+bundle exec rapicco input.md
 ```
 
-## How it works
+**Generate PDF:**
+```bash
+bundle exec rapicco --print input.md
+```
+
+## How it generates PDF
 
 1. Executes Rapicco with the input markdown file
 2. Captures each page of the presentation via PTY
@@ -41,4 +47,4 @@ rapicco input.md output.pdf
 
 ## License
 
-MIT
+Copyright © 2025 HASUMI Hitoshi. See MIT-LICENSE for further details.
