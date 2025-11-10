@@ -50,8 +50,9 @@ module Rapicco
 
         desc "Publish gem to RubyGems.org"
         task publish: :gem do
-          gem_file = gem_filename
-          sh "gem push #{gem_file}"
+          puts "Publishing gem is currently disabled."
+          #gem_file = gem_filename
+          #sh "gem push #{gem_file}"
         end
       end
 
