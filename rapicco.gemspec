@@ -18,4 +18,5 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "cairo", "~> 1.17"
   spec.add_dependency "ffi", "~> 1.15"
+  spec.add_dependency "rake", "~> 13.0"
 end

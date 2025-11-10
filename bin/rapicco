@@ -3,9 +3,11 @@
 require_relative '../lib/rapicco'
 
 def print_usage
-  puts "Usage: rapicco [options] <slide.md>"
+  puts "Usage: rapicco [command] [options] <slide.md>"
   puts ""
-  puts "Modes:"
+  puts "Commands:"
+  puts "  rapicco new <directory>                      Create slide project template"
+  puts "  rapicco new .                                Create template in current directory"
   puts "  rapicco <slide.md>                           Run presentation"
   puts "  rapicco --print <slide.md>                   Export to PDF (slide.pdf)"
   puts "  rapicco -p -o output.pdf <slide.md>          Export to PDF with custom name"
@@ -23,10 +25,31 @@ def print_usage
   puts "  --char-height NUMBER         Character height in pixels (default: 10)"
   puts ""
   puts "Examples:"
+  puts "  rapicco new my-slide"
+  puts "  rapicco new ."
   puts "  rapicco presentation.md"
   puts "  rapicco --print presentation.md"
   puts "  rapicco -p -o output.pdf presentation.md"
   puts "  rapicco -p --cols 600 --rows 150 presentation.md"
+end
+
+# Check for new command
+if ARGV[0] == 'new'
+  if ARGV.length != 2
+    puts "Error: Please provide a directory name"
+    puts "Usage: rapicco new <directory>"
+    exit 1
+  end
+
+  require_relative '../lib/rapicco/installer'
+  installer = Rapicco::Installer.new(ARGV[1])
+  begin
+    installer.install
+    exit 0
+  rescue => e
+    puts "Error: #{e.message}"
+    exit 1
+  end
 end
 
 options = {}
