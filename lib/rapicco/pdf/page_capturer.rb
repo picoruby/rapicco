@@ -16,6 +16,9 @@ module Rapicco
       attr_reader :pages
 
       def capture_all_pages(max_pages: 100)
+        expected_pages = count_slides(@slide_file)
+        puts "Detected #{expected_pages} slides in presentation"
+
         PTY.spawn("#{@rapicco_command} #{@slide_file}") do |stdout, stdin, pid|
           stdin.winsize = [@rows, @cols]
 
@@ -25,11 +28,10 @@ module Rapicco
           current_page = capture_current_screen(stdout, timeout: 2.0)
           if current_page
             @pages << current_page
-            puts "Captured page 1 (#{current_page.length} bytes)"
+            puts "Captured page 1/#{expected_pages} (#{current_page.length} bytes)"
           end
 
-          consecutive_skips = 0
-          (max_pages - 1).times do |i|
+          (expected_pages - 1).times do |i|
             puts "Sending 'l' for next page..."
             stdin.write('l')
             stdin.flush
@@ -42,26 +44,8 @@ module Rapicco
               break
             end
 
-            # Skip pages that are too small (likely just sprite animations)
-            if page.bytesize < 2000
-              puts "Skipping small page (#{page.bytesize} bytes, likely sprite animation only)"
-              consecutive_skips += 1
-              if consecutive_skips >= 3
-                puts "Three consecutive skips, assuming no more content pages"
-                break
-              end
-              next
-            end
-
-            consecutive_skips = 0
-
-            if page == @pages.last
-              puts "Page content identical to previous, stopping"
-              break
-            end
-
             @pages << page
-            puts "Captured page #{@pages.length} (#{page.length} bytes)"
+            puts "Captured page #{@pages.length}/#{expected_pages} (#{page.length} bytes)"
           end
 
           stdin.write("\x03")
@@ -76,6 +60,15 @@ module Rapicco
       end
 
       private
+
+      def count_slides(slide_file)
+        return 1 unless File.exist?(slide_file)
+
+        content = File.read(slide_file, encoding: 'UTF-8')
+        slide_count = content.lines.count { |line| line =~ /\A# / }
+
+        [slide_count, 1].max
+      end
 
       def capture_current_screen(stdout, timeout: 2.0)
         output = String.new(encoding: Encoding::BINARY)
