@@ -18,16 +18,25 @@ module Rapicco
       private
 
       def detect_picoruby_command
-        picoruby_paths = [
-          "/home/hasumi/work/R2P2/lib/picoruby/bin/picoruby",
-          "bin/picoruby"
-        ]
+        unless ENV['PICORUBY_PATH']
+          raise <<~ERROR
+            PICORUBY_PATH environment variable is not set.
 
-        picoruby = picoruby_paths.find { |path| File.executable?(path) }
-        unless picoruby
-          raise "picoruby executable not found. Please install PicoRuby or specify --rapicco-command"
+            Please set it to the path of your picoruby executable:
+              export PICORUBY_PATH=/path/to/picoruby
+
+            Or use the --rapicco-command option:
+              rapicco --rapicco-command "/path/to/picoruby -e ..." <slide.md> <output.pdf>
+
+            To install PicoRuby, see: https://github.com/picoruby/picoruby
+          ERROR
         end
 
+        unless File.executable?(ENV['PICORUBY_PATH'])
+          raise "PICORUBY_PATH is set to '#{ENV['PICORUBY_PATH']}' but it is not executable"
+        end
+
+        picoruby = ENV['PICORUBY_PATH']
         "#{picoruby} -e \"require 'rapicco'; Rapicco.new(ARGV[0], cols: #{@cols}, rows: #{@rows}).run\""
       end
 
