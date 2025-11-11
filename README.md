@@ -47,7 +47,7 @@ This generates:
 - `Gemfile` with rapicco gem
 - `Rakefile` with presentation tasks
 - `slide.md` template
-- `config.yml` configuration
+- `config.yaml` configuration
 - `README.md` template
 - `.gitignore`
 

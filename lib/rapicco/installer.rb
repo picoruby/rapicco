@@ -1,5 +1,6 @@
 require 'fileutils'
 require 'yaml'
+require_relative 'constants'
 
 module Rapicco
   class Installer
@@ -69,18 +70,18 @@ module Rapicco
         ---
         duration: 300
         sprite: hasumikin
-        title_font: terminus_8x16
-        font: terminus_6x12
+        title_font: shinonome_go16
+        font: shinonome_go12
         bold_color: red
         align: center
-        line_margin: 1
+        line_margin: 3
         code_indent: 2
         ---
 
-        # Title Slide
+        # #{Rapicco::PDF_DEFAULT_TITLE}
         {align=center, scale=2}
 
-        Your presentation title
+        #{Rapicco::PDF_DEFAULT_DESCRIPTION}
 
         # Introduction
 
@@ -100,6 +101,8 @@ module Rapicco
       config = {
         'id' => nil,
         'base_name' => nil,
+        'description' => nil,
+        'presentation_date' => nil,
         'tags' => [],
         'version' => nil,
         'licenses' => [],
@@ -107,10 +110,14 @@ module Rapicco
           'name' => nil,
           'email' => nil,
           'rubygems_user' => nil
+        },
+        'pdf' => {
+          'cols' => 350,
+          'rows' => 196
         }
       }
 
-      File.write(File.join(target_dir, 'config.yml'), YAML.dump(config))
+      File.write(File.join(target_dir, 'config.yaml'), YAML.dump(config))
     end
 
     def create_readme(target_dir)
@@ -119,13 +126,11 @@ module Rapicco
 
         Your slide description here.
 
-        ## Author
+        ## Authors
 
         Your Name
 
         ## License
-
-        CC BY-SA 4.0
       README
 
       File.write(File.join(target_dir, 'README.md'), content)

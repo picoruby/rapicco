@@ -44,10 +44,10 @@ class TestInstaller < Test::Unit::TestCase
     assert File.exist?(slide_path)
   end
 
-  def test_install_creates_config_yml
+  def test_install_creates_config_yaml
     installer = Rapicco::Installer.new(@test_dir)
     installer.install
-    config_path = File.join(@test_dir, 'config.yml')
+    config_path = File.join(@test_dir, 'config.yaml')
     assert File.exist?(config_path)
   end
 

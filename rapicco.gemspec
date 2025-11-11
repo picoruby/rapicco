@@ -1,6 +1,9 @@
+require_relative "lib/rapicco/version"
+require_relative "lib/rapicco/constants"
+
 Gem::Specification.new do |spec|
   spec.name          = "rapicco"
-  spec.version       = "0.1.0"
+  spec.version       = Rapicco::VERSION
   spec.authors       = ["HASUMI Hitoshi"]
   spec.email         = []
 
@@ -9,14 +12,13 @@ Gem::Specification.new do |spec|
   spec.homepage      = "https://github.com/picoruby/rapicco"
   spec.license       = "MIT"
 
-  spec.files         = Dir["lib/**/*", "bin/*", "README.md", "LICENSE"]
+  spec.files         = Dir["lib/**/*", "bin/*", "README.md", "LICENSE", "CHANGELOG.md"]
   spec.bindir        = "bin"
   spec.executables   = ["rapicco"]
   spec.require_paths = ["lib"]
 
-  spec.required_ruby_version = ">= 3.2.0"
+  spec.required_ruby_version = Rapicco::REQUIRED_RUBY_VERSION
 
   spec.add_dependency "cairo", "~> 1.17"
-  spec.add_dependency "ffi", "~> 1.15"
   spec.add_dependency "rake", "~> 13.0"
 end

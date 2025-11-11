@@ -15,10 +15,10 @@ module Rapicco
       private
 
       def load_config
-        unless File.exist?('config.yml')
-          raise "config.yml not found. Please create it first."
+        unless File.exist?('config.yaml')
+          raise "config.yaml not found. Please create it first."
         end
-        YAML.load_file('config.yml')
+        YAML.load_file('config.yaml')
       end
 
       def define_tasks
@@ -37,12 +37,35 @@ module Rapicco
           pdf_name = "#{@config['id']}-#{@config['base_name']}.pdf"
           pdf_path = File.join(pdf_dir, pdf_name)
 
-          sh "rapicco -p -o #{pdf_path} #{slide_file}"
+          # Check if PDF is up to date
+          if File.exist?(pdf_path)
+            pdf_mtime = File.mtime(pdf_path)
+            slide_mtime = File.mtime(slide_file)
+            config_mtime = File.mtime('config.yaml')
+
+            if slide_mtime < pdf_mtime && config_mtime < pdf_mtime
+              puts "PDF is up to date: #{pdf_path}"
+              next
+            end
+          end
+
+          cols = @config.dig('pdf', 'cols') || 350
+          rows = @config.dig('pdf', 'rows') || 196
+
+          sh "rapicco -p -o #{pdf_path} #{slide_file} --cols #{cols} --rows #{rows}"
           puts "PDF created: #{pdf_path}"
         end
 
+        task :validate_config do
+          Rapicco::SlideGemBuilder.validate_config(@config)
+        end
+
+        task :validate_readme do
+          Rapicco::SlideGemBuilder.validate_readme
+        end
+
         desc "Create gem package"
-        task gem: :pdf do
+        task gem: [:validate_config, :validate_readme, :pdf] do
           builder = Rapicco::SlideGemBuilder.new(@config)
           gem_file = builder.build
           puts "Gem created: #{gem_file}"
@@ -50,9 +73,8 @@ module Rapicco
 
         desc "Publish gem to RubyGems.org"
         task publish: :gem do
-          puts "Publishing gem is currently disabled."
-          #gem_file = gem_filename
-          #sh "gem push #{gem_file}"
+          gem_file = gem_filename
+          sh "gem push #{gem_file}"
         end
       end
 
