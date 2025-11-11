@@ -14,6 +14,7 @@ It also converts Rapicco presentations  into PDF documents capturing the ANSI te
 - Ruby (you can see supported versions in [rapicco.gemspec](rapicco.gemspec))
 - Cairo graphics library
 - PicoRuby with Rapicco installed
+  - `export PICORUBY_PATH=path/to/picoruby` needs to be set
 
 ## Installation
 
@@ -25,7 +26,7 @@ gem install rapicco
 
 ### Create a presentation project (recommended)
 
-1. Create a new presentation project:
+1. Create a new presentation project along with `mkdir`:
 
 ```bash
 rapicco new my-presentation
@@ -38,6 +39,9 @@ Or in existing directory,
 cd my-presentation
 rapicco new .
 ```
+
+> [!WARNING]
+> The above command will override existing files.
 
 This generates:
 - `Gemfile` with rapicco gem
