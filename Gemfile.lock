@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rapicco (0.1.0)
+    rapicco (0.2.0)
       cairo (~> 1.17)
       rake (~> 13.0)
 
